@@ -1,0 +1,44 @@
+const express = require("express");
+const bodyParser = require("body-parser");
+
+const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.post("/webhook", (req, res) => {
+  const message = (req.body.Body || "").toLowerCase();
+
+  let reponse = "Bonjour 👋 Je suis un bot WhatsApp automatique. Écris *menu*.";
+
+  if (message.includes("bonjour") || message.includes("salut")) {
+    reponse = "Bonjour 😊 Bienvenue ! Écris *menu* pour voir les options.";
+  } 
+  else if (message.includes("menu")) {
+    reponse =
+      "📋 *MENU*\n" +
+      "1️⃣ Informations\n" +
+      "2️⃣ Prix\n" +
+      "3️⃣ Contact\n\n" +
+      "Réponds avec un numéro.";
+  } 
+  else if (message === "1") {
+    reponse = "ℹ️ Nous offrons des services professionnels.";
+  } 
+  else if (message === "2") {
+    reponse = "💰 Nos prix commencent à partir de 50€.";
+  } 
+  else if (message === "3") {
+    reponse = "📞 Contact : +123 456 789.";
+  } 
+  else {
+    reponse = "❓ Je n’ai pas compris. Écris *menu*.";
+  }
+
+  res.set("Content-Type", "text/xml");
+  res.send(`
+    <Response>
+      <Message>${reponse}</Message>
+    </Response>
+  `);
+});
+
+app.listen(process.env.PORT || 3000);
